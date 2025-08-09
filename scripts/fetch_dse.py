@@ -1,4 +1,5 @@
-from scripts.utils import *
+# from scripts.utils import *
+from utils import *
 import pandas as pd
 import time
 
