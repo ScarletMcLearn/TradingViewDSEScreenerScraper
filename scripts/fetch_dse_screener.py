@@ -150,7 +150,7 @@ def fetch_dse_dataframe(rate_limiter=None) -> pd.DataFrame:
         print(f"[Page {page_num}] Fetching rows {start}–{end} ...", flush=True)
 
         t0 = time.time()
-        result = tradingview_scan_bangladesh(
+        result = tradingview_scanner_bangladesh(
             columns=cols,
             result_range=(start, end),
             sort_by="market_cap",
