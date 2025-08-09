@@ -4,6 +4,9 @@ concurrency:
   group: dse-screener
   cancel-in-progress: false
 
+permissions:
+  contents: write
+
 on:
   schedule:
     # Run Sun–Thu at 04:00 UTC (10:00 in Bangladesh)
