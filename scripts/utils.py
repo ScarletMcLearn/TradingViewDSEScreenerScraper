@@ -662,18 +662,61 @@ def run_all_tests() -> None:
 
 
 
-from datetime import datetime
+# from datetime import datetime
+# import os
+# import pandas as pd
+
+# def save_dse_screener(df: pd.DataFrame, save_as_csv: bool = False) -> str:
+#     """
+#     Save DataFrame as CSV in Kaggle with filename pattern dse-screener-MM-DD-YYYY.csv.
+    
+#     Args:
+#         df (pd.DataFrame): The DataFrame to save.
+#         save_as_csv (bool): If True, saves the CSV; if False, does nothing.
+    
+#     Returns:
+#         str: The file path if saved, or an empty string if not saved.
+#     """
+#     if not save_as_csv:
+#         print("ℹ️ save_as_csv=False — skipping save.")
+#         return ""
+
+#     # Directory for saving
+#     # save_dir = "/data/"
+#     # os.makedirs(save_dir, exist_ok=True)
+
+#         # Resolve folder relative to repo root
+#     repo_root = os.path.dirname(os.path.dirname(__file__))  # one level up from scripts/
+#     save_dir = os.path.join(repo_root, "data")
+#     os.makedirs(save_dir, exist_ok=True)  # make sure folder exists
+
+#     # Create filename in format: dse-screener-MM-DD-YYYY.csv
+#     filename = f"dse-screener-{datetime.now().strftime('%m-%d-%Y')}.csv"
+#     filepath = os.path.join(save_dir, filename)
+
+#     # Save without overwriting
+#     if not os.path.exists(filepath):
+#         df.to_csv(filepath, index=False)
+#         print(f"✅ Saved: {filepath}")
+#         return filepath
+#     else:
+#         print(f"⚠️ File already exists, not overwriting: {filepath}")
+#         return filepath
+
+
 import os
+from datetime import datetime
 import pandas as pd
 
-def save_dse_screener(df: pd.DataFrame, save_as_csv: bool = False) -> str:
+def save_dse_screener(df: pd.DataFrame, save_as_csv: bool = False, _object: str = "screener") -> str:
     """
-    Save DataFrame as CSV in Kaggle with filename pattern dse-screener-MM-DD-YYYY.csv.
-    
+    Save DataFrame as CSV in repo with filename pattern dse-<object>-MM-DD-YYYY.csv.
+
     Args:
         df (pd.DataFrame): The DataFrame to save.
         save_as_csv (bool): If True, saves the CSV; if False, does nothing.
-    
+        _object (str): Name of subfolder (e.g., 'screener', 'abc').
+
     Returns:
         str: The file path if saved, or an empty string if not saved.
     """
@@ -681,26 +724,23 @@ def save_dse_screener(df: pd.DataFrame, save_as_csv: bool = False) -> str:
         print("ℹ️ save_as_csv=False — skipping save.")
         return ""
 
-    # Directory for saving
-    # save_dir = "/data/"
-    # os.makedirs(save_dir, exist_ok=True)
-
-        # Resolve folder relative to repo root
+    # Resolve folder relative to repo root
     repo_root = os.path.dirname(os.path.dirname(__file__))  # one level up from scripts/
-    save_dir = os.path.join(repo_root, "data")
-    os.makedirs(save_dir, exist_ok=True)  # make sure folder exists
+    save_dir = os.path.join(repo_root, "data", _object)
+    os.makedirs(save_dir, exist_ok=True)
 
-    # Create filename in format: dse-screener-MM-DD-YYYY.csv
-    filename = f"dse-screener-{datetime.now().strftime('%m-%d-%Y')}.csv"
+    # Create filename in format: dse-<object>-MM-DD-YYYY.csv
+    filename = f"dse-{_object}-{datetime.now().strftime('%m-%d-%Y')}.csv"
     filepath = os.path.join(save_dir, filename)
 
     # Save without overwriting
     if not os.path.exists(filepath):
         df.to_csv(filepath, index=False)
         print(f"✅ Saved: {filepath}")
-        return filepath
     else:
         print(f"⚠️ File already exists, not overwriting: {filepath}")
-        return filepath
+
+    return filepath
+
 
 
