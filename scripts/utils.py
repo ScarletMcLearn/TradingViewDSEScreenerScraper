@@ -160,7 +160,7 @@ def make_shared_rate_limiter(
 # Your function updated to use the shared rate-limit maker
 # ---------------------------------------------------------
 
-def tradingview_scan_bangladesh(
+def tradingview_scanner_bangladesh(
     *,
     country_path: str = "bangladesh",
     label_product: str = "screener-stock",
@@ -423,7 +423,7 @@ def run_all_tests() -> None:
         _expect(f"Column alias '{alias}' resolves to canonical '{canonical}'")
         _pass(f"Resolved: {alias} -> {canonical}")
 
-        resp = tradingview_scan_bangladesh(
+        resp = tradingview_scanner_bangladesh(
             columns=[canonical], sort_by=alias, sort_order=order, result_range=(0, n),
             **common # type: ignore
         )
@@ -442,7 +442,7 @@ def run_all_tests() -> None:
 
     # Test default sorting by market cap descending
     _info("Test 1: Default sorting by market cap (desc)")
-    resp = tradingview_scan_bangladesh(columns=["market_cap_basic"], result_range=(0, 50), **common) # type: ignore
+    resp = tradingview_scanner_bangladesh(columns=["market_cap_basic"], result_range=(0, 50), **common) # type: ignore
     _expect("Response contains 'data' list")
     _assert_true("data" in resp and isinstance(resp["data"], list),
                  "resp['data'] exists and is list",
@@ -496,7 +496,7 @@ def run_all_tests() -> None:
 
     # Sorting by analyst rating ascending; verify types
     _info("Test 12: Sorting by analyst rating (asc) & types")
-    resp = tradingview_scan_bangladesh(
+    resp = tradingview_scanner_bangladesh(
         columns=["AnalystRating"],
         sort_by="analyst_rating",
         sort_order="asc",
@@ -514,11 +514,11 @@ def run_all_tests() -> None:
 
     # Ascending vs descending consistency: price
     _info("Test 13: Ascending vs descending consistency (price)")
-    resp_desc = tradingview_scan_bangladesh(
+    resp_desc = tradingview_scanner_bangladesh(
         columns=["close"], sort_by="price", sort_order="desc", result_range=(0, 20),
         **common # type: ignore
     )
-    resp_asc = tradingview_scan_bangladesh(
+    resp_asc = tradingview_scanner_bangladesh(
         columns=["close"], sort_by="price", sort_order="asc", result_range=(0, 20),
         **common # type: ignore
     )
@@ -531,7 +531,7 @@ def run_all_tests() -> None:
 
     # Auto-include sort field in columns
     _info("Test 14: Auto-include sort field when not requested (sort by price)")
-    resp = tradingview_scan_bangladesh(
+    resp = tradingview_scanner_bangladesh(
         columns=["name"], sort_by="price", sort_order="desc", result_range=(0, 5),
         **common # type: ignore
     )
@@ -548,7 +548,7 @@ def run_all_tests() -> None:
 
     # Instrument type filtering: only depository receipts
     _info("Test 15: Only depository receipts (type == 'dr')")
-    resp = tradingview_scan_bangladesh(
+    resp = tradingview_scanner_bangladesh(
         columns=["type"],
         include_common_stock=False,
         include_preferred_stock=False,
@@ -567,42 +567,42 @@ def run_all_tests() -> None:
 
     # Numeric range filters (strict comparisons)
     _info("Test 16: Numeric range filters")
-    resp = tradingview_scan_bangladesh(columns=["close"], price_range=(100, 200), result_range=(0, 20), **common) # type: ignore
+    resp = tradingview_scanner_bangladesh(columns=["close"], price_range=(100, 200), result_range=(0, 20), **common) # type: ignore
     price_vals = [row["d"][0] for row in resp["data"] if row["d"][0] is not None]
     _expect("All price values strictly between 100 and 200")
     _assert_true(all(100 < v < 200 for v in price_vals),
                  "100 < price < 200",
                  _fmt_list_preview(price_vals))
 
-    resp = tradingview_scan_bangladesh(columns=["change"], change_percent_range=(-5, 5), result_range=(0, 20), **common) # type: ignore
+    resp = tradingview_scanner_bangladesh(columns=["change"], change_percent_range=(-5, 5), result_range=(0, 20), **common) # type: ignore
     change_vals = [row["d"][0] for row in resp["data"] if row["d"][0] is not None]
     _expect("All change% values strictly between -5 and 5")
     _assert_true(all(-5 < v < 5 for v in change_vals),
                  "-5 < change < 5",
                  _fmt_list_preview(change_vals))
 
-    resp = tradingview_scan_bangladesh(columns=["market_cap_basic"], market_cap_range=(1e10, 1e12), result_range=(0, 20), **common) # type: ignore
+    resp = tradingview_scanner_bangladesh(columns=["market_cap_basic"], market_cap_range=(1e10, 1e12), result_range=(0, 20), **common) # type: ignore
     cap_vals = [row["d"][0] for row in resp["data"] if row["d"][0] is not None]
     _expect("All market cap values strictly between 1e10 and 1e12")
     _assert_true(all(1e10 < v < 1e12 for v in cap_vals),
                  "1e10 < market_cap < 1e12",
                  _fmt_list_preview(cap_vals))
 
-    resp = tradingview_scan_bangladesh(columns=["price_earnings_ttm"], pe_range=(0, 20), result_range=(0, 20), **common) # type: ignore
+    resp = tradingview_scanner_bangladesh(columns=["price_earnings_ttm"], pe_range=(0, 20), result_range=(0, 20), **common) # type: ignore
     pe_vals = [row["d"][0] for row in resp["data"] if row["d"][0] is not None]
     _expect("All P/E values strictly between 0 and 20")
     _assert_true(all(0 < v < 20 for v in pe_vals),
                  "0 < PE < 20",
                  _fmt_list_preview(pe_vals))
 
-    resp = tradingview_scan_bangladesh(columns=["earnings_per_share_diluted_yoy_growth_ttm"], eps_growth_range=(-100, 100), result_range=(0, 20), **common) # type: ignore
+    resp = tradingview_scanner_bangladesh(columns=["earnings_per_share_diluted_yoy_growth_ttm"], eps_growth_range=(-100, 100), result_range=(0, 20), **common) # type: ignore
     eps_vals = [row["d"][0] for row in resp["data"] if row["d"][0] is not None]
     _expect("All EPS growth values strictly between -100 and 100")
     _assert_true(all(-100 < v < 100 for v in eps_vals),
                  "-100 < eps_growth < 100",
                  _fmt_list_preview(eps_vals))
 
-    resp = tradingview_scan_bangladesh(columns=["dividends_yield_current"], dividend_yield_range=(0, 10), result_range=(0, 20), **common) # type: ignore
+    resp = tradingview_scanner_bangladesh(columns=["dividends_yield_current"], dividend_yield_range=(0, 10), result_range=(0, 20), **common) # type: ignore
     div_vals = [row["d"][0] for row in resp["data"] if row["d"][0] is not None]
     _expect("All dividend yield values strictly between 0 and 10")
     _assert_true(all(0 < v < 10 for v in div_vals),
@@ -611,7 +611,7 @@ def run_all_tests() -> None:
 
     # Sector inclusion filter (multi-value)
     _info("Test 17: Sector inclusion filter")
-    resp = tradingview_scan_bangladesh(columns=["sector"], result_range=(0, 50), **common) # type: ignore
+    resp = tradingview_scanner_bangladesh(columns=["sector"], result_range=(0, 50), **common) # type: ignore
     sectors_observed = []
     for row in resp["data"]:
         sec = row["d"][0]
@@ -621,7 +621,7 @@ def run_all_tests() -> None:
             break
     if not sectors_observed:
         sectors_observed = ["Finance"]
-    resp = tradingview_scan_bangladesh(columns=["sector"], sectors=sectors_observed, result_range=(0, 20), **common) # type: ignore
+    resp = tradingview_scanner_bangladesh(columns=["sector"], sectors=sectors_observed, result_range=(0, 20), **common) # type: ignore
     sector_vals = [row["d"][0] for row in resp["data"]]
     _expect(f"All returned sectors in {sectors_observed}")
     _assert_true(all(v in sectors_observed for v in sector_vals),
@@ -630,7 +630,7 @@ def run_all_tests() -> None:
 
     # Analyst rating inclusion filter (multi-value)
     _info("Test 18: Analyst rating inclusion filter")
-    resp = tradingview_scan_bangladesh(columns=["AnalystRating"], result_range=(0, 50), **common) # type: ignore
+    resp = tradingview_scanner_bangladesh(columns=["AnalystRating"], result_range=(0, 50), **common) # type: ignore
     ratings_observed = []
     for row in resp["data"]:
         val = row["d"][0]
@@ -640,7 +640,7 @@ def run_all_tests() -> None:
             break
     if not ratings_observed:
         ratings_observed = ["StrongBuy"]
-    resp = tradingview_scan_bangladesh(columns=["AnalystRating"], analyst_ratings=ratings_observed, result_range=(0, 20), **common) # type: ignore
+    resp = tradingview_scanner_bangladesh(columns=["AnalystRating"], analyst_ratings=ratings_observed, result_range=(0, 20), **common) # type: ignore
     rating_vals = [row["d"][0] for row in resp["data"]]
     _expect(f"All returned analyst ratings in {ratings_observed}")
     _assert_true(all(v in ratings_observed for v in rating_vals),
@@ -650,7 +650,7 @@ def run_all_tests() -> None:
     # Range limiting: number of rows == end - start
     _info("Test 19: Range limiting")
     start, end = 10, 25
-    resp = tradingview_scan_bangladesh(columns=["market_cap_basic"], result_range=(start, end), **common) # type: ignore
+    resp = tradingview_scanner_bangladesh(columns=["market_cap_basic"], result_range=(start, end), **common) # type: ignore
     expected_len = max(0, end - start)
     got_len = len(resp["data"])
     _expect(f"Returned rows == {expected_len} for range ({start}, {end})")
