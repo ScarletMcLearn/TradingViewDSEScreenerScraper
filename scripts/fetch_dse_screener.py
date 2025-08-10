@@ -104,13 +104,13 @@
 # save_dse_screener(df, save_as_csv=True)
 
 
-# scripts/fetch_dse.py
+# scripts/fetch_dse_screener.py
 from scripts.utils import *  # keep this since Actions runs from repo root
 import pandas as pd
 import numpy as np
 import time
 
-def fetch_dse_dataframe(rate_limiter=None) -> pd.DataFrame:
+def fetch_dse_screener_dataframe(rate_limiter=None) -> pd.DataFrame:
     # Step 1: shared rate limiter (use provided or build one)
     rl = rate_limiter or make_shared_rate_limiter(
         name="tradingview-dse",
@@ -196,11 +196,11 @@ def fetch_dse_dataframe(rate_limiter=None) -> pd.DataFrame:
     return df
 
 def main(save_csv: bool = True) -> None:
-    df = fetch_dse_dataframe()
+    df = fetch_dse_screener_dataframe()
     print("\nSample data:")
     print(df.head(10).to_string(index=False))
     # Save via your util
-    save_dse_screener(df, save_as_csv=save_csv, _object="screener")
+    save_dse_data(df, save_as_csv=save_csv, _object="screener")
 
 if __name__ == "__main__":
     # When run directly (e.g. locally)

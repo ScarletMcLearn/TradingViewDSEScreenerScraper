@@ -708,7 +708,7 @@ import os
 from datetime import datetime
 import pandas as pd
 
-def save_dse_screener(df: pd.DataFrame, save_as_csv: bool = False, _object: str = "screener") -> str:
+def save_dse_data(df: pd.DataFrame, save_as_csv: bool = False, _object: str = "screener") -> str:
     """
     Save DataFrame as CSV in repo with filename pattern dse-<object>-MM-DD-YYYY.csv.
 

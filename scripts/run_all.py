@@ -5,20 +5,33 @@ import argparse
 import traceback
 from typing import Callable, Dict, List
 
-from scripts.utils import make_shared_rate_limiter, save_dse_screener
-from scripts import fetch_dse_screener
+from scripts.utils import make_shared_rate_limiter, save_dse_data
+from scripts import fetch_dse_screener, fetch_dse_stocks
 
 def task_fetch_dse_screener(save_csv: bool, rate_limiter) -> None:
-    df = fetch_dse_screener.fetch_dse_dataframe(rate_limiter=rate_limiter)
+    df = fetch_dse_screener.fetch_dse_screener_dataframe(rate_limiter=rate_limiter)
     try:
         print("\n[DSE] Sample:")
         print(df.head(10).to_string(index=False))
     except Exception:
         pass
-    save_dse_screener(df, save_as_csv=save_csv, _object="screener")
+    save_dse_data(df, save_as_csv=save_csv, _object="screener")
+
+
+
+
+def task_fetch_dse_market_stock(save_csv: bool, rate_limiter) -> None:
+    df = fetch_dse_stocks.fetch_dse_market_stock_df(rate_limiter=rate_limiter)
+    try:
+        print("\n[STOCKS] Sample:")
+        print(df.head(10).to_string(index=False))
+    except Exception:
+        pass
+    save_dse_data(df, save_as_csv=save_csv, _object="stock")
 
 TASKS: Dict[str, Callable[[bool, object], None]] = {
-    "dse": task_fetch_dse_screener,
+    "dse_screener": task_fetch_dse_screener,
+     "get_stocks": task_fetch_dse_market_stock,  # <-- added
 }
 
 def parse_args(argv: List[str]) -> argparse.Namespace:
@@ -26,7 +39,7 @@ def parse_args(argv: List[str]) -> argparse.Namespace:
     p.add_argument(
         "--tasks",
         nargs="+",
-        default=["dse"],
+        default=["dse_screener"],
         help=f"Tasks to run (available: {', '.join(TASKS.keys())})"
     )
     # Make saving the default; allow opting out with --no-save-csv
